@@ -56,7 +56,7 @@ def broadcast(msg, prefix=""):  # prefix is for name identification.
         sock.send(bytes(prefix, "utf8")+msg)
 
 
-
+# Obviously, the server will have to be started in order to have a chatroom
 def startserver(HOST, PORT):
     BUFSIZ = 1024
     ADDR = (HOST, PORT)
