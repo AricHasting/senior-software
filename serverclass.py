@@ -5,6 +5,11 @@ from threading import Thread
 
 
 accepting = True
+SERVER = socket(AF_INET, SOCK_STREAM)
+clients = {}
+addresses = {}
+
+
 def accept_incoming_connections():
     """Sets up handling for incoming clients."""
     while accepting:
@@ -13,6 +18,7 @@ def accept_incoming_connections():
         # client.send(bytes("Greetings from the cave! Now type your name and press enter!", "utf8"))
         addresses[client] = client_address
         Thread(target=handle_client, args=(client,)).start()
+    return
 
 
 def handle_client(client):  # Takes client socket as argument.
@@ -40,6 +46,7 @@ def handle_client(client):  # Takes client socket as argument.
             del clients[client]
             # broadcast(bytes("%s has left the chat." % name, "utf8"))
             break
+    return
 
 
 def broadcast(msg, prefix=""):  # prefix is for name identification.
@@ -49,21 +56,15 @@ def broadcast(msg, prefix=""):  # prefix is for name identification.
         sock.send(bytes(prefix, "utf8")+msg)
 
 
-clients = {}
-addresses = {}
 
-HOST = 'localhost'
-PORT = 8082
-BUFSIZ = 1024
-ADDR = (HOST, PORT)
-
-SERVER = socket(AF_INET, SOCK_STREAM)
-SERVER.bind(ADDR)
-
-if __name__ == "__main__":
+def startserver(HOST, PORT):
+    BUFSIZ = 1024
+    ADDR = (HOST, PORT)
+    SERVER.bind(ADDR)
     SERVER.listen(5)
-    print("Waiting for connection...")
     ACCEPT_THREAD = Thread(target=accept_incoming_connections)
     ACCEPT_THREAD.start()
-    ACCEPT_THREAD.join()
-    # SERVER.close()
+
+def closeserver():
+    accepting = False
+    SERVER.close()
