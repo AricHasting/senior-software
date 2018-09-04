@@ -1,42 +1,66 @@
-# Credit to https://www.geeksforgeeks.org/simple-chat-room-using-python/
-
-# Python program to implement client side of chat room.
-import socket
+#!/usr/bin/env python3
+# Credit: https://medium.com/swlh/lets-write-a-chat-app-in-python-f6783a9ac170
+"""Script for Tkinter GUI chat client."""
+from socket import AF_INET, socket, SOCK_STREAM
+from threading import Thread
+from collections import deque
+import re
 import select
-import sys
 
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-if len(sys.argv) != 3:
-    print "Correct usage: script, IP address, port number"
-    exit()
-IP_address = str(sys.argv[1])
-Port = int(sys.argv[2])
-server.connect((IP_address, Port))
- 
-while True:
- 
-    # maintains a list of possible input streams
-    sockets_list = [sys.stdin, server]
- 
-    """ There are two possible input situations. Either the
-    user wants to give  manual input to send to other people,
-    or the server is sending a message  to be printed on the
-    screen. Select returns from sockets_list, the stream that
-    is reader for input. So for example, if the server wants
-    to send a message, then the if condition will hold true
-    below.If the user wants to send a message, the else
-    condition will evaluate as true"""
-    read_sockets,write_socket, error_socket = select.select(sockets_list,[],[])
- 
-    for socks in read_sockets:
-        if socks == server:
-            message = socks.recv(2048)
-            print 'Received', message
-        else:
-            message = sys.stdin.readline()
-            if (message.strip() == ''): continue
-            server.send(message)
-            sys.stdout.write("<You> sent:")
-            sys.stdout.write(message)
-            sys.stdout.flush()
-server.close()
+# This will be the list of received messages
+buffer = deque()
+connected = True
+client_socket = None
+
+
+def attempt_to_receive():
+    """Handles receiving of messages.
+    This method will run and continuously check to see if a message comes in.
+    If a message comes in, it'll be added to the buffer."""
+    global client_socket
+    global connected
+    while connected:
+        try:
+            ready = select.select([client_socket], [], [])
+            if ready[0]:
+                msg = client_socket.recv(1024).decode("utf8")
+                buffer.append(msg)
+        except OSError:  # Possibly client has left the chat.
+            raise("OSError")
+    return
+
+def has_message():
+    """Will indicate if a message is ready to be read.""" 
+    if buffer:
+        return True
+    else:
+        return False
+
+def receive():
+    """Actually returns a message from buffer if it has one.
+    If the buffer is empty, an empty string will be returned"""
+    if buffer:
+        return buffer.popleft()
+    else:
+        return ''
+
+
+def send(msg):
+    """This will broadcast msg across the chatroom"""
+    global connected
+    if not connected:
+        raise("Can't send message because this client is not connected!")
+    """Handles sending of messages."""
+    if(msg == "{quit}"): connected = False
+    client_socket.send(bytes(msg, "utf8"))
+
+# 
+def connect(HOST, PORT):
+    """This must be the first client method that is called"""
+    ADDR = (HOST, PORT)
+    global client_socket
+    client_socket = socket(AF_INET, SOCK_STREAM)
+    client_socket.connect(ADDR)
+
+    receive_thread = Thread(target=attempt_to_receive)
+    receive_thread.start()
