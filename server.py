@@ -73,6 +73,7 @@ def startserver(HOST, PORT):
     SERVER.bind(ADDR)
     SERVER.listen(5)
     ACCEPT_THREAD = Thread(target=accept_incoming_connections)
+    ACCEPT_THREAD.daemon = True
     ACCEPT_THREAD.start()
 
 def closeserver():

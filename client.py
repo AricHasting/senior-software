@@ -63,4 +63,5 @@ def connect(HOST, PORT):
     client_socket.connect(ADDR)
 
     receive_thread = Thread(target=attempt_to_receive)
+    receive_thread.daemon = True
     receive_thread.start()
