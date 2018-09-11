@@ -36,10 +36,8 @@ root.geometry(size)
 # the colors are just there to differentiate the frames, should change later
 avatarFrame = Frame(root, bg = "red",width=windowWidth, height=windowHeight/2, bd=5)
 chatFrame = Frame(root, bg="blue", width=windowWidth, height=windowHeight/2, bd=5)
-avatarFrame.grid(row=0, column=0,sticky="NSEW")
-chatFrame.grid(row=1, column=0,sticky="NSEW")
-avatarFrame.pack(fill=BOTH, expand=1) #frame will change size as well if window size is changed
-chatFrame.pack(fill=BOTH,expand=1) #frame will change size as well if window size is changed
+avatarFrame.pack(fill=BOTH, expand=1)
+chatFrame.pack(fill=BOTH,expand=1)
 entry = Entry(chatFrame,bd=5)
 
 
