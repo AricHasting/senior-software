@@ -4,6 +4,11 @@ from tkinter import *
 
 chat = None
 S = None
+
+def close_window():
+    root.destroy()
+
+
 def createAvatar():
     # replace this with an avatar widget
     avatar = Label(avatarFrame,text = "avatar") # replace this with the image of the avatar
@@ -65,6 +70,7 @@ createAvatar()
 createChat()
 
 root.bind('<Return>', sendMessage)
+root.protocol("WM_DELETE_WINDOW", close_window)
 root.mainloop()
 
 
