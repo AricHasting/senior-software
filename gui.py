@@ -1,12 +1,24 @@
 
 from tkinter import *
+from client import *
+from server import *
 
 
 chat = None
 S = None
+running = True
 
 def close_window():
+    send("{quit}")
+    global running
+    running = False
     root.destroy()
+
+
+def listenForMsg():
+    while running:
+        if has_message():
+            display_message(receive())
 
 
 def createAvatar():
@@ -38,12 +50,23 @@ def createChat():
 def sendMessage(event):
     if(len(entry.get()) > 0):
         print("This would have sent %s if it was implemented." % entry.get()) # send message here instead of printing
+        send(entry.get())
         chat.config(state=NORMAL)
         chat.insert(END, entry.get())
         chat.insert(END, "\n")
         entry.delete(first=0,last="end") # clear the entry
         chat.config(state=DISABLED)
         chat.see(END)
+
+
+def display_message(msg):
+    print("This would have sent %s if it was implemented." % msg) # send message here instead of printing
+    chat.config(state=NORMAL)
+    chat.insert(END, msg)
+    chat.insert(END, "\n")
+    entry.delete(first=0,last="end") # clear the entry
+    chat.config(state=DISABLED)
+    chat.see(END)
 
 
 root = Tk()
@@ -71,6 +94,18 @@ createChat()
 
 root.bind('<Return>', sendMessage)
 root.protocol("WM_DELETE_WINDOW", close_window)
+
+
+
+connect("127.0.0.1", 8080)
+
+
+
+receive_msg_thread = Thread(target=listenForMsg)
+receive_msg_thread.daemon = True
+receive_msg_thread.start()
+
+
 root.mainloop()
 
 
