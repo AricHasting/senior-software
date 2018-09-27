@@ -2,6 +2,7 @@
 from tkinter import *
 from client import *
 from server import *
+import time
 
 
 chat = None
@@ -19,6 +20,8 @@ def listenForMsg():
     while running:
         if has_message():
             display_message(receive())
+        else:
+            time.sleep(0.1)
 
 
 def createAvatar():
@@ -52,11 +55,8 @@ def sendMessage(event):
         print("This would have sent %s if it was implemented." % entry.get()) # send message here instead of printing
         send(entry.get())
         chat.config(state=NORMAL)
-        chat.insert(END, entry.get())
-        chat.insert(END, "\n")
-        entry.delete(first=0,last="end") # clear the entry
-        chat.config(state=DISABLED)
-        chat.see(END)
+        display_message(entry.get())
+        entry.delete(first=0,last="end")
 
 
 def display_message(msg):

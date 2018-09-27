@@ -33,7 +33,7 @@ def handle_client(client):  # Takes client socket as argument.
 
     name = client.recv(BUFSIZ).decode("utf8")
     if name in clients.values():
-        raise 'This name is already being used!'
+        raise 'This name(' + name + ') is already being used!'
     elif name == '':
         raise 'This name is empty!'
     
@@ -42,7 +42,7 @@ def handle_client(client):  # Takes client socket as argument.
     while accepting:
         msg = client.recv(BUFSIZ)
         if msg != bytes("{quit}", "utf8"):
-            broadcast(msg)
+            broadcast(msg, clients[client])
         else:
             client.send(bytes("{quit}", "utf8") )
             client.close()
@@ -51,11 +51,13 @@ def handle_client(client):  # Takes client socket as argument.
     return
 
 
-def broadcast(msg):
+def broadcast(msg, name = None):
     """Broadcasts a message to all the clients."""
     global clients
     for sock in clients:
-        sock.send(msg)
+        if name == None or clients[sock] != name:
+            print(name, clients[sock])
+            sock.send(msg)
 
 
 def startserver(HOST, PORT):
