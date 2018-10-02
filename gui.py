@@ -8,6 +8,7 @@ import time
 chat = None
 S = None
 running = True
+name = None
 
 def close_window():
     send("{quit}")
@@ -21,7 +22,7 @@ def listenForMsg():
         if has_message():
             display_message(receive())
         else:
-            time.sleep(0.1)
+            time.sleep(1)
 
 
 def createAvatar():
@@ -50,21 +51,27 @@ def createChat():
     entry.pack(side = BOTTOM)
 
 
-def sendMessage(event):
+
+def sendMessage(event = None):
+    global name
     if(len(entry.get()) > 0):
-        print("This would have sent %s if it was implemented." % entry.get()) # send message here instead of printing
-        send(entry.get())
-        chat.config(state=NORMAL)
-        display_message(entry.get())
-        entry.delete(first=0,last="end")
+        if (name == None):
+            name = entry.get()
+            send(name)
+            entry.delete(first=0,last="end")
+        else:
+            msg = name + ':'
+            msg = msg + entry.get()
+            send(msg)
+            chat.config(state=NORMAL)
+            display_message(msg)
+            entry.delete(first=0,last="end")
 
 
 def display_message(msg):
-    print("This would have sent %s if it was implemented." % msg) # send message here instead of printing
     chat.config(state=NORMAL)
     chat.insert(END, msg)
     chat.insert(END, "\n")
-    entry.delete(first=0,last="end") # clear the entry
     chat.config(state=DISABLED)
     chat.see(END)
 
@@ -97,7 +104,7 @@ root.protocol("WM_DELETE_WINDOW", close_window)
 
 
 
-connect("127.0.0.1", 8080)
+connect("10.30.147.18", 8080)
 
 
 
