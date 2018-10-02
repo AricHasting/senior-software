@@ -13,6 +13,7 @@ def testConnectServer():
 	try:
 		startserver("127.0.0.1", 8081)
 		connect("127.0.0.1", 8081)
+		closeserver()
 	except:
 		raise Exception("Cannot connect!")
 
@@ -27,3 +28,4 @@ if __name__ == '__main__':
 	testConeectNoServer()
 	testConnectServer()
 	testReceiveEmpty()
+	something()

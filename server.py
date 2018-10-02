@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 """Server for multithreaded (asynchronous) chat application."""
-from socket import AF_INET, socket, SOCK_STREAM
+from socket import AF_INET, socket, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from threading import Thread
 
 # Credit: https://medium.com/swlh/lets-write-a-chat-app-in-python-f6783a9ac170
 accepting = True
 SERVER = socket(AF_INET, SOCK_STREAM)
+SERVER.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 clients = {}
 addresses = {}
 BUFSIZ = 1024
@@ -52,7 +53,7 @@ def handle_client(client):  # Takes client socket as argument.
 
 
 def broadcast(msg, name = None):
-    """Broadcasts a message to all the clients."""
+    """Broadcasts a message to all the clients(unless the sender name is specified and then they won't get the message)."""
     global clients
     for sock in clients:
         if name == None or clients[sock] != name:
@@ -76,3 +77,5 @@ def closeserver():
     global SERVER
     accepting = False
     SERVER.close()
+    SERVER = socket(AF_INET, SOCK_STREAM)
+    SERVER.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
