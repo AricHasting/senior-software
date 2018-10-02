@@ -1,5 +1,6 @@
 # agent avatar module
 
+import cv2
 from tkinter import *
 from tkinter import ttk
 
@@ -9,7 +10,7 @@ from avatar_util import Avatar_state
 class Avatar_widget(ttk.Label):
     #For now, hard code image file paths
     #TODO code file paths
-    image_paths = {
+    video_paths = {
             Avatar_state.NEUTRAL:"images/neutral.gif",
             Avatar_state.HAPPY:"images/happy.gif",
             Avatar_state.SAD:"images/sad.gif",
@@ -25,8 +26,8 @@ class Avatar_widget(ttk.Label):
         self.state_str.set(Avatar_state.NEUTRAL.value)
         self.curr_state = Avatar_state(self.state_str.get())
         #Load image files
-        for state, image_path in self.image_paths.items():
-            self.images[state] = PhotoImage(file=image_path)
+        for state, video_path in self.video_paths.items():
+            self.images[state] = PhotoImage(file=video_path)
         #Call Super Constructor
         ttk.Label.__init__(self, parent, 
                 text = self.state_str.get(), image = self.images[self.curr_state])
