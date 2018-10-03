@@ -7,17 +7,10 @@ import PIL.Image
 import PIL.ImageTk
 
 from avatar_util import Avatar_state
+from avatar_util import video_paths as vp
 
 # Avatar widget
 class Avatar_widget:
-    #For now, hard code video file paths
-    video_paths = {
-            Avatar_state.NEUTRAL:"videos/Neutral_paper.webm",
-            Avatar_state.HAPPY:"videos/Happy_paper.webm",
-            Avatar_state.SAD:"videos/Sad_paper.webm",
-            Avatar_state.CONFUSED:"videos/Confused_paper.webm"
-            }
-
     # Constructor
     # Automatically set initial state to neutral
     def __init__(self, parent_frame, max_width, max_height):
@@ -27,7 +20,7 @@ class Avatar_widget:
         self.state_str.set(Avatar_state.NEUTRAL.value)
         self.curr_state = Avatar_state(self.state_str.get())
         # initialize video object
-        self.vid = Avatar_capture(Avatar_widget.video_paths[self.curr_state])
+        self.vid = Avatar_capture(vp[self.curr_state])
         # save max size params
         self.max_width = max_width
         self.max_height = max_height
@@ -63,11 +56,11 @@ class Avatar_widget:
             pass
         # if state is updated, re-initialize Avatar_capture object
         if state_update:
-            self.vid = Avatar_capture(Avatar_widget.video_paths[self.curr_state])      
+            self.vid = Avatar_capture(vp[self.curr_state])      
         ret, frame = self.vid.get_frame()
         # if get_frame failed, might be end of video so restart.
         if not ret:
-            self.vid = Avatar_capture(Avatar_widget.video_paths[self.curr_state])
+            self.vid = Avatar_capture(vp[self.curr_state])
             ret, frame = self.vid.get_frame()
         if ret:
             im = PIL.Image.fromarray(frame)
@@ -106,8 +99,9 @@ if __name__ == "__main__":
 
     root = Tk()
     root.title("Test Avatar")
-
-    avatar = Avatar_widget(root,1000,600) 
+    a_frame = ttk.Frame(root)
+    avatar = Avatar_widget(a_frame,1000,600) 
+    a_frame.pack()
 
     state_var = avatar.get_state_var()
     state_select = ttk.Combobox(root, textvariable=state_var)
