@@ -74,6 +74,7 @@ def sendMessage(event = None):
         if (name == None):
             name = entry.get()
             send(name)
+            appendToLog("Set name-" + name + "\n")
             entry.delete(first=0,last="end")
         else:
             msg = name + ':'
