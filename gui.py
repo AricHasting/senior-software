@@ -21,7 +21,7 @@ def close_window():
 def listenForMsg():
     while running:
         if has_message():
-            msg = receive
+            msg = receive()
             print (msg)
             display_message(msg)
             log = "Message Received-" + msg
