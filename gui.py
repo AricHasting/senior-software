@@ -24,7 +24,7 @@ def listenForMsg():
             msg = receive()
             print (msg)
             display_message(msg)
-            log = "Message Received-" + str(msg)
+            log = "Message Received-" + str(msg) + "\n"
             appendToLog(log)
         else:
             time.sleep(1)
@@ -121,9 +121,7 @@ root.protocol("WM_DELETE_WINDOW", close_window)
 
 now = datetime.datetime.now()
 
-defineFile("VideoLog_" + datetime.datetime.now().strftime("%m") +
- "_" + datetime.datetime.now().strftime("%d") +
- "_" + datetime.datetime.now().strftime("%y"))
+defineFile("VideoLog_" + datetime.datetime.now().strftime("%m-%d-%Y-%k-%M-%S") + ".log")
 
 # connect("129.244.98.101", 8080)
 connect("127.0.0.1", 8080)
