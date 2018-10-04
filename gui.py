@@ -1,14 +1,15 @@
-
 from tkinter import *
 from client import *
 from server import *
 import time
+import datetime
 
 
 chat = None
 S = None
 running = True
 name = None
+fileName = None
 
 def close_window():
     send("{quit}")
@@ -20,9 +21,23 @@ def close_window():
 def listenForMsg():
     while running:
         if has_message():
-            display_message(receive())
+            msg = receive
+            print (msg)
+            display_message(msg)
+            log = "Message Received-" + msg
+            appendToLog(log)
         else:
             time.sleep(1)
+
+
+def defineFile(name):
+    global fileName
+    fileName = name
+
+def appendToLog(msg):
+    global fileName
+    with open(fileName, 'a') as f:
+        f.write(msg)
 
 
 def createAvatar():
@@ -103,8 +118,14 @@ root.bind('<Return>', sendMessage)
 root.protocol("WM_DELETE_WINDOW", close_window)
 
 
+now = datetime.datetime.now()
 
-connect("10.30.147.18", 8080)
+defineFile("VideoLog_" + datetime.datetime.now().strftime("%m") +
+ "_" + datetime.datetime.now().strftime("%d") +
+ "_" + datetime.datetime.now().strftime("%y"))
+
+# connect("129.244.98.101", 8080)
+connect("127.0.0.1", 8080)
 
 
 
