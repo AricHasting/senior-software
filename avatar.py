@@ -13,7 +13,7 @@ from avatar_util import video_paths as vp
 class Avatar_widget:
     # Constructor
     # Automatically set initial state to neutral
-    def __init__(self, parent_frame, max_width, max_height):
+    def __init__(self, parent_frame, max_width = 200, max_height = 150):
         self.state_str = StringVar()
         self.parent_frame = parent_frame
         #Start in neutral stare

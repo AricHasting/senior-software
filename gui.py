@@ -1,10 +1,12 @@
-
+from avatar import Avatar_widget
 from tkinter import *
 
+avatar_state_var = None
+
 def createAvatar():
-    # replace this with an avatar widget
-    avatar = Label(avatarFrame,text = "avatar") # replace this with the image of the avatar
-    avatar.pack()
+    avatar = Avatar_widget(avatarFrame)
+    global avatar_state_var 
+    avatar_state_var = avatar.get_state_var()
 
 def createChat():
     # replace this with a chat widget
