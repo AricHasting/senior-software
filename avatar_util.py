@@ -4,11 +4,11 @@ from abc import ABC, abstractmethod
 from enum import Enum
 
 class Avatar_state(Enum):
-    NEUTRAL = "Neutral"
-    HAPPY = "Happy"
-    CONFUSED = "Confused"
-    SAD = "Sad"
-    DIZZY = "Dizzy"
+    NEUTRAL = "neutral"
+    HAPPY = "happy"
+    CONFUSED = "confused"
+    SAD = "sad"
+    DIZZY = "dizzy"
    #EARTH
    #WATER
    #FIRE

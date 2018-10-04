@@ -16,7 +16,7 @@ class Avatar_widget:
     def __init__(self, parent_frame, max_width = 200, max_height = 150):
         self.state_str = StringVar()
         self.parent_frame = parent_frame
-        #Start in neutral stare
+        #Start in neutral state
         self.state_str.set(Avatar_state.NEUTRAL.value)
         self.curr_state = Avatar_state(self.state_str.get())
         # initialize video object
@@ -50,7 +50,7 @@ class Avatar_widget:
         state_update = False
         try:
             old_state = self.curr_state
-            self.curr_state = Avatar_state(self.state_str.get())
+            self.curr_state = Avatar_state(self.state_str.get().lower())
             state_update = old_state != self.curr_state
         except ValueError:
             pass
