@@ -80,6 +80,7 @@ def sendMessage(event = None):
             msg = name + ':'
             msg = msg + entry.get()
             send(msg)
+            appendToLog("Sent message-" + msg + "\n")
             chat.config(state=NORMAL)
             display_message(msg)
             entry.delete(first=0,last="end")
