@@ -21,10 +21,10 @@ def close_window():
 def listenForMsg():
     while running:
         if has_message():
-            msg = receive
+            msg = receive()
             print (msg)
             display_message(msg)
-            log = "Message Received-" + msg
+            log = "Message Received-" + str(msg)
             appendToLog(log)
         else:
             time.sleep(1)
@@ -62,6 +62,7 @@ def createChat():
     chat.config(yscrollcommand=scroll.set)
 
     send = Button(sendFrame,text="send", command=sendMessage)
+
     send.pack(side=BOTTOM)
     entry.pack(side = BOTTOM)
 
