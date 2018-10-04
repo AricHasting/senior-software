@@ -12,10 +12,10 @@ name = None
 fileName = None
 
 def close_window():
+    root.destroy()
     send("{quit}")
     global running
     running = False
-    root.destroy()
 
 
 def listenForMsg():
