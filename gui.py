@@ -130,8 +130,8 @@ if __name__=="__main__":
     root.geometry(size)
 
     # the colors are just there to differentiate the frames, should change later
-    avatarFrame = Frame(root, bg = "red",width=windowWidth, height=windowHeight/3, bd=5)
-    chatFrame = Frame(root, bg="blue", width=windowWidth, height=windowHeight/3, bd=5)
+    avatarFrame = Frame(root, bg = "white",width=windowWidth, height=windowHeight/3, bd=5)
+    chatFrame = Frame(root, bg="white", width=windowWidth, height=windowHeight/3, bd=5)
     sendFrame = Frame(root, bg="white", width=windowWidth, height=windowHeight/6, bd=5)
     avatarFrame.pack(fill=BOTH, expand=1)
     chatFrame.pack(fill=BOTH,expand=1)
