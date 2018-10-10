@@ -30,7 +30,7 @@ def listenForMsg():
             # parse message for avatar commands
             avatar_state = False
             if not Im_a_wizard_harry:
-                avatar_state = parser.getAvatar(message)
+                avatar_state = parser.getAvatar(msg)
             if avatar_state != False:
                 avatar_state_var.set(avatar_state)
             else:
