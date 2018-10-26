@@ -11,6 +11,8 @@ S = None
 running = True
 name = None
 fileName = None
+avatar_w = None
+avatar_model_var = None
 avatar_state_var = None
 Im_a_wizard_harry = False
 
@@ -30,9 +32,14 @@ def listenForMsg():
             # parse message for avatar commands
             avatar_state = False
             if not Im_a_wizard_harry:
-                avatar_state = parser.getAvatar(msg)
+                if parser.getCommand(msg.lower()) == "avatar":
+                    avatar_state = parser.getAvatar(msg)
+                elif parser.getCommand(msg.lower()) == "model":
+                    avatar_state = parser.getArguments(msg)[0]
             if avatar_state != False:
                 avatar_state_var.set(avatar_state)
+            if avatar_model != False:
+                avatar_model_var.set(avatar_model)
             else:
                 print (msg)
                 display_message(msg)
@@ -40,7 +47,6 @@ def listenForMsg():
             appendToLog(log)
         else:
             time.sleep(1)
-
 
 def defineFile(name):
     global fileName
@@ -52,9 +58,11 @@ def appendToLog(msg):
         f.write(msg)
 
 def createAvatar():
-    avatar = Avatar_widget(avatarFrame, windowWidth/2, windowHeight/3)
+    global avatar_w
+    global avatar_model_var
     global avatar_state_var 
-    avatar_state_var = avatar.get_state_var()
+    avatar_w = Avatar_widget(avatarFrame, windowWidth/2, windowHeight/3)
+    avatar_model_var, avatar_state_var = avatar_w.get_state_var()
 
 def createChat():
     global chat
@@ -77,38 +85,48 @@ def createChat():
     send.pack(side=BOTTOM)
     entry.pack(side = BOTTOM)
 
-
+# set Im_a_wizard_harry to true
+# Add wizard controls to GUI
+def sendHagrid():
+    global avatar_w
+    global Im_a_wizard_harry
+    Im_a_wizard_harry = True
+    avatar_w.reveal_controls()
 
 def sendMessage(event = None):
     global name
-    global Im_a_wizard_harry
     if(len(entry.get()) > 0):
         # check for wizard command
-        if parser.getCommand(entry.get().lower()) == "wizard":
-            Im_a_wizard_harry = True
-            entry.delete(first=0,last="end")
+        msg = entry.get()
+        if parser.getCommand(msg.lower()) == "wizard":
+            sendHagrid() # Im_a_wizard_harry = true
         else:
-            # check for avatar command
-            if parser.getCommand(entry.get().lower()) == "avatar"\
+            # check for avatar state command
+            if parser.getCommand(msg.lower()) == "avatar"\
                     and Im_a_wizard_harry:
                 # update local avatar state
                 # then send message unaltered
-                msg = entry.get()
                 avatar_state = parser.getAvatar(msg)
                 avatar_state_var.set(avatar_state)
                 send(msg)
-                entry.delete(first=0,last="end")
+            # check for avatar model command
+            elif parser.getCommand(msg.lower()) == "model"\
+                    and Im_a_wizard_harry:
+                # update local avatar model
+                # then send message unaltered
+                avatar_model = parser.getArguments(msg)[0]
+                avatar_model_var.set(avatar_model)
+                send(msg)
             elif (name == None):
-                name = entry.get()
+                name = msg
                 send(name)
-                entry.delete(first=0,last="end")
             else:
-                msg = name + ':'
-                msg = msg + entry.get()
+                msg = name + ':' + msg
                 send(msg)
                 chat.config(state=NORMAL)
                 display_message(msg)
-                entry.delete(first=0,last="end")
+        # clear entry field
+        entry.delete(first=0,last="end")
 
 
 def display_message(msg):
@@ -152,7 +170,7 @@ if __name__=="__main__":
      "_" + datetime.datetime.now().strftime("%d") +
      "_" + datetime.datetime.now().strftime("%y"))
 
-    # connect("129.244.98.101", 8080)
+    #connect("10.30.146.181", 8080)
     connect("127.0.0.1", 8080)
 
 
