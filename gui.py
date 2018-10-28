@@ -62,7 +62,7 @@ def createChat():
     global chat
     # replace this with a chat widget
     chatString = "chat"
-    chat = Text(chatFrame)
+    chat = Text(chatFrame, bg="#E8E8E8")
     chat.config(state=DISABLED)
 
     chat.pack()
@@ -74,14 +74,20 @@ def createChat():
     scroll.config(command=chat.yview)
     chat.config(yscrollcommand=scroll.set)
 
-    send = Button(sendFrame,text="send", command=sendMessage)
+    send = Button(sendFrame,text="Send", command=sendMessage)
 
     send.pack(side=BOTTOM)
 
-    entry.config(yscrollcommand=scroll.set)
+    scroll2 = Scrollbar(sendFrame, command=entry.yview)
+    chat.pack(side=LEFT, fill=Y)
+    scroll2.pack( side=RIGHT, fill=Y)
+    scroll2.config(command=entry.yview)
+    entry.config(yscrollcommand=scroll2.set)
     entry.pack(side = BOTTOM)
 
-
+    ttsLabel = Label(chatFrame, text="Toggle Text to Speech")
+    ttsLabel.pack()
+    ttsToggle.pack()
 
 
 def sendMessage(event = None):
@@ -124,15 +130,26 @@ def display_message(msg):
     chat.insert(END, msg)
     chat.insert(END, "\n")
     chat.config(state=DISABLED)
-    if msg.startswith(name.rstrip()): # change this to not
+    chat.see(END)
+
+
+    # only use text to speech for messages from other user and if text to speech is turned on
+    if not msg.startswith(name.rstrip()) and (ttsToggle["text"] == "On"):
         msg.rstrip()
         msg = msg[len(name):len(msg)]
         tts = gTTS(text=msg, lang='en', slow=False)
         tts.save("tts.mp3")
         os.system("mpg123 tts.mp3")
-    chat.see(END)
+
+
+def ttsButton():
+    if ttsToggle["text"] == "On":
+        ttsToggle["text"] = "Off"
+    else:
+        ttsToggle["text"] = "On"
 
 if __name__=="__main__":
+
     root = Tk()
     root.title("Wizard of Oz")
 
@@ -150,9 +167,10 @@ if __name__=="__main__":
     avatarFrame.pack(fill=BOTH, expand=1)
     chatFrame.pack(fill=BOTH,expand=1)
     sendFrame.pack(fill=BOTH, expand=1)
-    #entry = Entry(chatFrame,bd=5)
-    entry = Text(sendFrame, cursor="xterm", height=5, bd=5, bg="#E8E8E8")
+    entry = Text(sendFrame, cursor="xterm", bd=5, bg="#E8E8E8")
 
+    # text to speech is on by default
+    ttsToggle = Button(chatFrame, text="On", command=ttsButton)
 
     createAvatar()
     createChat()
