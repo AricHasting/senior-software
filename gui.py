@@ -28,8 +28,6 @@ def listenForMsg():
     while running:
         if has_message():
             msg = receive()
-            # TODO Remove Debug Code
-            print(msg)
             # If current user is Dorothy,
             # parse message for avatar commands
             avatar_state = False
@@ -66,16 +64,12 @@ def sendAvatarModelUpdate(event):
     global avatar_model_var
     global Im_a_wizard_harry
     if Im_a_wizard_harry:
-        #TODO remove debug print
-        print("Avatar updated from combo box")
         send("/model "+ avatar_model_var.get())
 
 def sendAvatarStateUpdate(event):
     global avatar_state_var
     global Im_a_wizard_harry
     if Im_a_wizard_harry:
-        #TODO remove debug print
-        print("Avatar updated from combo box")
         send("/avatar "+ avatar_state_var.get())
 
 def createAvatar():
