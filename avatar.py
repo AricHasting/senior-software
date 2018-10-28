@@ -27,9 +27,11 @@ class Avatar_widget:
         self.avatar_box = ttk.Combobox(parent_frame, textvariable = self.avatar_str)
         self.avatar_box['values'] = [a.value for a in Avatar]
         self.avatar_box['state'] = "readonly"
+        self.avatar_box.bind("<<ComboboxSelected>>", self.update_model_event)
         self.state_box = ttk.Combobox(parent_frame, textvariable = self.state_str)
         self.state_box['values'] = [a.value for a in Avatar_state]
         self.state_box['state'] = "readonly"
+        self.state_box.bind("<<ComboboxSelected>>", self.update_state_event)
         # initialize video object
         self.vid = Avatar_capture(vp[self.curr_avatar][self.curr_state])
         # save max size params
@@ -46,6 +48,14 @@ class Avatar_widget:
     # Accessor method for state variable. Returns StringVar objects
     def get_state_var(self):
         return self.avatar_str, self.state_str
+
+    # Generate an event in the parent frame
+    # Only call after state is changed through GUI.
+    def update_state_event(self, event):
+        self.parent_frame.event_generate("<<AvatarStateUpdate>>", when="tail")
+
+    def update_model_event(self, event):
+        self.parent_frame.event_generate("<<AvatarModelUpdate>>", when="tail")
 
     # Make state control comboboxes visible
     # This method should be called when wizard state is established

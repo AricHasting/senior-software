@@ -28,17 +28,20 @@ def listenForMsg():
     while running:
         if has_message():
             msg = receive()
+            # TODO Remove Debug Code
+            print(msg)
             # If current user is Dorothy,
             # parse message for avatar commands
             avatar_state = False
+            avatar_model = False
             if not Im_a_wizard_harry:
                 if parser.getCommand(msg.lower()) == "avatar":
                     avatar_state = parser.getAvatar(msg)
                 elif parser.getCommand(msg.lower()) == "model":
-                    avatar_state = parser.getArguments(msg)[0]
+                    avatar_model = parser.getArguments(msg)[0]
             if avatar_state != False:
                 avatar_state_var.set(avatar_state)
-            if avatar_model != False:
+            elif avatar_model != False:
                 avatar_model_var.set(avatar_model)
             else:
                 print (msg)
@@ -57,12 +60,32 @@ def appendToLog(msg):
     with open(fileName, 'a') as f:
         f.write(msg)
 
+# Function called when avatar state/model
+# is updated through GUI
+def sendAvatarModelUpdate(event):
+    global avatar_model_var
+    global Im_a_wizard_harry
+    if Im_a_wizard_harry:
+        #TODO remove debug print
+        print("Avatar updated from combo box")
+        send("/model "+ avatar_model_var.get())
+
+def sendAvatarStateUpdate(event):
+    global avatar_state_var
+    global Im_a_wizard_harry
+    if Im_a_wizard_harry:
+        #TODO remove debug print
+        print("Avatar updated from combo box")
+        send("/avatar "+ avatar_state_var.get())
+
 def createAvatar():
     global avatar_w
     global avatar_model_var
     global avatar_state_var 
     avatar_w = Avatar_widget(avatarFrame, windowWidth/2, windowHeight/3)
     avatar_model_var, avatar_state_var = avatar_w.get_state_var()
+    avatarFrame.bind("<<AvatarModelUpdate>>", sendAvatarModelUpdate)
+    avatarFrame.bind("<<AvatarStateUpdate>>", sendAvatarStateUpdate)
 
 def createChat():
     global chat
