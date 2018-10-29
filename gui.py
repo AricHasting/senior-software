@@ -1,10 +1,12 @@
 from avatar import Avatar_widget
+from gtts import gTTS
 from tkinter import *
 from client import *
 from server import *
 import time
 import datetime
 import parser
+import os
 
 chat = None
 S = None
@@ -85,7 +87,7 @@ def createChat():
     global chat
     # replace this with a chat widget
     chatString = "chat"
-    chat = Text(chatFrame)
+    chat = Text(chatFrame, bg="#E8E8E8")
     chat.config(state=DISABLED)
 
     chat.pack()
@@ -97,11 +99,20 @@ def createChat():
     scroll.config(command=chat.yview)
     chat.config(yscrollcommand=scroll.set)
 
-    send = Button(sendFrame,text="send", command=sendMessage)
+    send = Button(sendFrame,text="Send", command=sendMessage)
 
     send.pack(side=BOTTOM)
-    entry.pack(side = BOTTOM)
 
+    scroll2 = Scrollbar(sendFrame, command=entry.yview)
+    chat.pack(side=LEFT, fill=Y)
+    scroll2.pack( side=RIGHT, fill=Y)
+    scroll2.config(command=entry.yview)
+    entry.config(yscrollcommand=scroll2.set)
+    entry.pack(side = BOTTOM)
+    ttsLabel = Label(chatFrame, text="Text to Speech")
+    ttsLabel.pack()
+    ttsToggle.pack()
+    
 # set Im_a_wizard_harry to true
 # Add wizard controls to GUI
 def sendHagrid():
@@ -110,41 +121,40 @@ def sendHagrid():
     Im_a_wizard_harry = True
     avatar_w.reveal_controls()
 
+
 def sendMessage(event = None):
     global name
-    if(len(entry.get()) > 0):
+    global Im_a_wizard_harry
+    if(len(entry.get(1.0,END)) > 0):
         # check for wizard command
-        msg = entry.get()
-        if parser.getCommand(msg.lower()) == "wizard":
-            sendHagrid() # Im_a_wizard_harry = true
+        if parser.getCommand(entry.get(1.0,END).lower()) == "wizard":
+            Im_a_wizard_harry = True
+            entry.delete(1.0,END)
         else:
-            # check for avatar state command
-            if parser.getCommand(msg.lower()) == "avatar"\
+            # check for avatar command
+            if parser.getCommand(entry.get(1.0,END).lower()) == "avatar"\
                     and Im_a_wizard_harry:
                 # update local avatar state
                 # then send message unaltered
+                msg = entry.get(1.0,END)
                 avatar_state = parser.getAvatar(msg)
                 avatar_state_var.set(avatar_state)
                 send(msg)
-            # check for avatar model command
-            elif parser.getCommand(msg.lower()) == "model"\
-                    and Im_a_wizard_harry:
-                # update local avatar model
-                # then send message unaltered
-                avatar_model = parser.getArguments(msg)[0]
-                avatar_model_var.set(avatar_model)
-                send(msg)
+                entry.delete(1.0,END)
             elif (name == None):
-                name = msg
+                name = entry.get(1.0,END)
+                name.rstrip()
                 send(name)
+                entry.delete(1.0,END)
             else:
-                msg = name + ':' + msg
+                msg = name.rstrip() + ": "
+                #text = entry.get(1.0,END)
+                #print(text)
+                msg = msg + entry.get(1.0,END)
                 send(msg)
                 chat.config(state=NORMAL)
                 display_message(msg)
-        # clear entry field
-        entry.delete(first=0,last="end")
-
+                entry.delete(1.0,END)
 
 def display_message(msg):
     chat.config(state=NORMAL)
@@ -153,9 +163,26 @@ def display_message(msg):
     chat.config(state=DISABLED)
     chat.see(END)
 
+
+    # only use text to speech for messages from other user and if text to speech is turned on
+    if not msg.startswith(name.rstrip()) and (ttsToggle["text"] == "On"):
+        msg.rstrip()
+        msg = msg[len(name):len(msg)]
+        tts = gTTS(text=msg, lang='en', slow=False)
+        tts.save("tts.mp3")
+        os.system("mpg123 tts.mp3")
+
+
+def ttsButton():
+    if ttsToggle["text"] == "On":
+        ttsToggle["text"] = "Off"
+    else:
+        ttsToggle["text"] = "On"
+
 if __name__=="__main__":
+
     root = Tk()
-    root.title("Paired Programming")
+    root.title("Wizard of Oz")
 
     # can change the size if necessary
     windowWidth = 800
@@ -171,8 +198,10 @@ if __name__=="__main__":
     avatarFrame.pack(fill=BOTH, expand=1)
     chatFrame.pack(fill=BOTH,expand=1)
     sendFrame.pack(fill=BOTH, expand=1)
-    entry = Entry(chatFrame,bd=5)
+    entry = Text(sendFrame, cursor="xterm", bd=5, bg="#E8E8E8")
 
+    # text to speech is on by default
+    ttsToggle = Button(chatFrame, text="On", command=ttsButton)
 
     createAvatar()
     createChat()
