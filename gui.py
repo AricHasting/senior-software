@@ -85,7 +85,7 @@ def createChat():
     entry.config(yscrollcommand=scroll2.set)
     entry.pack(side = BOTTOM)
 
-    ttsLabel = Label(chatFrame, text="Toggle Text to Speech")
+    ttsLabel = Label(chatFrame, text="Text to Speech")
     ttsLabel.pack()
     ttsToggle.pack()
 
