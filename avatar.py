@@ -36,7 +36,7 @@ class Avatar_widget:
         self.vid = Avatar_capture(vp[self.curr_avatar][self.curr_state])
         # save max size params
         self.max_width = max_width
-        self.max_height = max_height - 20
+        self.max_height = max_height
         # create canvas
         self.canvas = Canvas( parent_frame, width=max_width, height=max_height)
         self.canvas.pack()
@@ -60,7 +60,7 @@ class Avatar_widget:
     # Make state control comboboxes visible
     # This method should be called when wizard state is established
     def reveal_controls(self):
-        self.avatar_box.pack()
+        self.avatar_box.pack(side = LEFT)
         self.state_box.pack()
 
     # Returns the size of a scaled down version of the 

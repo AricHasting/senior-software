@@ -30,6 +30,7 @@ def listenForMsg():
     while running:
         if has_message():
             msg = receive()
+            print(msg)
             # If current user is Dorothy,
             # parse message for avatar commands
             avatar_state = False
@@ -128,7 +129,7 @@ def sendMessage(event = None):
     if(len(entry.get(1.0,END)) > 0):
         # check for wizard command
         if parser.getCommand(entry.get(1.0,END).lower()) == "wizard":
-            Im_a_wizard_harry = True
+            sendHagrid()
             entry.delete(1.0,END)
         else:
             # check for avatar command
@@ -139,6 +140,15 @@ def sendMessage(event = None):
                 msg = entry.get(1.0,END)
                 avatar_state = parser.getAvatar(msg)
                 avatar_state_var.set(avatar_state)
+                send(msg)
+                entry.delete(1.0,END)
+            elif parser.getCommand(entry.get(1.0,END).lower()) == "model"\
+                    and Im_a_wizard_harry:
+                # update local avatar model
+                # then send message unaltered
+                msg = entry.get(1.0,END)
+                avatar_model = parser.getArgument(msg)[0]
+                avatar_model_var.set(avatar_model)
                 send(msg)
                 entry.delete(1.0,END)
             elif (name == None):
