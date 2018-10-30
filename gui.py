@@ -127,7 +127,7 @@ def sendMessage(event = None):
 
 def text_to_speech(msg):
     # only use text to speech for messages from other user and if text to speech is turned on
-    if msg.startswith(name.rstrip()) and (ttsToggle["text"] == "On"):
+    if not msg.startswith(name.rstrip()) and (ttsToggle["text"] == "On"):
         msg.rstrip()
         msg = msg[len(name):len(msg)]
         tts = gTTS(text=msg, lang='en', slow=False)
