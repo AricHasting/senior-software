@@ -13,8 +13,6 @@ S = None
 running = True
 name = None
 fileName = None
-avatar_w = None
-avatar_model_var = None
 avatar_state_var = None
 Im_a_wizard_harry = False
 
@@ -34,16 +32,10 @@ def listenForMsg():
             # If current user is Dorothy,
             # parse message for avatar commands
             avatar_state = False
-            avatar_model = False
             if not Im_a_wizard_harry:
-                if parser.getCommand(msg.lower()) == "avatar":
-                    avatar_state = parser.getAvatar(msg)
-                elif parser.getCommand(msg.lower()) == "model":
-                    avatar_model = parser.getArguments(msg)[0]
+                avatar_state = parser.getAvatar(msg)
             if avatar_state != False:
                 avatar_state_var.set(avatar_state)
-            elif avatar_model != False:
-                avatar_model_var.set(avatar_model)
             else:
                 print (msg)
                 display_message(msg)
@@ -51,6 +43,7 @@ def listenForMsg():
             appendToLog(log)
         else:
             time.sleep(1)
+
 
 def defineFile(name):
     global fileName
@@ -61,28 +54,10 @@ def appendToLog(msg):
     with open(fileName, 'a') as f:
         f.write(msg)
 
-# Function called when avatar state/model
-# is updated through GUI
-def sendAvatarModelUpdate(event):
-    global avatar_model_var
-    global Im_a_wizard_harry
-    if Im_a_wizard_harry:
-        send("/model "+ avatar_model_var.get())
-
-def sendAvatarStateUpdate(event):
-    global avatar_state_var
-    global Im_a_wizard_harry
-    if Im_a_wizard_harry:
-        send("/avatar "+ avatar_state_var.get())
-
 def createAvatar():
-    global avatar_w
-    global avatar_model_var
+    avatar = Avatar_widget(avatarFrame, windowWidth/2, windowHeight/3)
     global avatar_state_var 
-    avatar_w = Avatar_widget(avatarFrame, windowWidth/2, windowHeight/3)
-    avatar_model_var, avatar_state_var = avatar_w.get_state_var()
-    avatarFrame.bind("<<AvatarModelUpdate>>", sendAvatarModelUpdate)
-    avatarFrame.bind("<<AvatarStateUpdate>>", sendAvatarStateUpdate)
+    avatar_state_var = avatar.get_state_var()
 
 def createChat():
     global chat
@@ -110,17 +85,10 @@ def createChat():
     scroll2.config(command=entry.yview)
     entry.config(yscrollcommand=scroll2.set)
     entry.pack(side = BOTTOM)
+
     ttsLabel = Label(chatFrame, text="Text to Speech")
     ttsLabel.pack()
     ttsToggle.pack()
-    
-# set Im_a_wizard_harry to true
-# Add wizard controls to GUI
-def sendHagrid():
-    global avatar_w
-    global Im_a_wizard_harry
-    Im_a_wizard_harry = True
-    avatar_w.reveal_controls()
 
 
 def sendMessage(event = None):
@@ -166,6 +134,17 @@ def sendMessage(event = None):
                 display_message(msg)
                 entry.delete(1.0,END)
 
+
+def text_to_speech(msg):
+    # only use text to speech for messages from other user and if text to speech is turned on
+    if msg.startswith(name.rstrip()) and (ttsToggle["text"] == "On"):
+        msg.rstrip()
+        msg = msg[len(name):len(msg)]
+        tts = gTTS(text=msg, lang='en', slow=False)
+        tts.save("tts.mp3")
+        os.system("mpg123 tts.mp3")
+
+
 def display_message(msg):
     chat.config(state=NORMAL)
     chat.insert(END, msg)
@@ -173,14 +152,9 @@ def display_message(msg):
     chat.config(state=DISABLED)
     chat.see(END)
 
-
-    # only use text to speech for messages from other user and if text to speech is turned on
-    if not msg.startswith(name.rstrip()) and (ttsToggle["text"] == "On"):
-        msg.rstrip()
-        msg = msg[len(name):len(msg)]
-        tts = gTTS(text=msg, lang='en', slow=False)
-        tts.save("tts.mp3")
-        os.system("mpg123 tts.mp3")
+    tts_thread = Thread(target=text_to_speech, args=(msg,))
+    tts_thread.daemon = True
+    tts_thread.start()
 
 
 def ttsButton():
@@ -226,7 +200,7 @@ if __name__=="__main__":
      "_" + datetime.datetime.now().strftime("%d") +
      "_" + datetime.datetime.now().strftime("%y"))
 
-    #connect("10.30.146.181", 8080)
+    # connect("129.244.98.101", 8080)
     connect("127.0.0.1", 8080)
 
 
