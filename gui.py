@@ -186,8 +186,11 @@ if __name__=="__main__":
     name = easygui.enterbox("What is your name?")
     if name == None:
         sys.exit()
+
     while name == '':
         name = easygui.enterbox("What is your name?")
+        if name == None:
+            sys.exit()
 
     send(name)
 
