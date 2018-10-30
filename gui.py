@@ -3,6 +3,7 @@ from gtts import gTTS
 from tkinter import *
 from client import *
 from server import *
+import easygui
 import time
 import datetime
 import parser
@@ -142,7 +143,7 @@ def sendMessage(event = None):
                 send(msg)
                 entry.delete(1.0,END)
             elif (name == None):
-                name = entry.get(1.0,END)
+                name = entry.get(1.0 ,END)
                 name.rstrip()
                 send(name)
                 entry.delete(1.0,END)
@@ -181,6 +182,15 @@ def ttsButton():
 
 if __name__=="__main__":
 
+    connect("127.0.0.1", 8080)
+    name = easygui.enterbox("What is your name?")
+    if name == None:
+        sys.exit()
+    while name == '':
+        name = easygui.enterbox("What is your name?")
+
+    send(name)
+
     root = Tk()
     root.title("Wizard of Oz")
 
@@ -217,7 +227,6 @@ if __name__=="__main__":
      "_" + datetime.datetime.now().strftime("%y"))
 
     #connect("10.30.146.181", 8080)
-    connect("127.0.0.1", 8080)
 
 
 
