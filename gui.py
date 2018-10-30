@@ -125,6 +125,16 @@ def sendMessage(event = None):
                 entry.delete(1.0,END)
 
 
+def text_to_speech(msg):
+    # only use text to speech for messages from other user and if text to speech is turned on
+    if msg.startswith(name.rstrip()) and (ttsToggle["text"] == "On"):
+        msg.rstrip()
+        msg = msg[len(name):len(msg)]
+        tts = gTTS(text=msg, lang='en', slow=False)
+        tts.save("tts.mp3")
+        os.system("mpg123 tts.mp3")
+
+
 def display_message(msg):
     chat.config(state=NORMAL)
     chat.insert(END, msg)
@@ -132,14 +142,9 @@ def display_message(msg):
     chat.config(state=DISABLED)
     chat.see(END)
 
-
-    # only use text to speech for messages from other user and if text to speech is turned on
-    if not msg.startswith(name.rstrip()) and (ttsToggle["text"] == "On"):
-        msg.rstrip()
-        msg = msg[len(name):len(msg)]
-        tts = gTTS(text=msg, lang='en', slow=False)
-        tts.save("tts.mp3")
-        os.system("mpg123 tts.mp3")
+    tts_thread = Thread(target=text_to_speech, args=(msg,))
+    tts_thread.daemon = True
+    tts_thread.start()
 
 
 def ttsButton():
