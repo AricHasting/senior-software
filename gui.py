@@ -13,6 +13,8 @@ S = None
 running = True
 name = None
 fileName = None
+avatar_w = None
+avatar_model_var = None
 avatar_state_var = None
 Im_a_wizard_harry = False
 
@@ -31,10 +33,16 @@ def listenForMsg():
             # If current user is Dorothy,
             # parse message for avatar commands
             avatar_state = False
+            avatar_model = False
             if not Im_a_wizard_harry:
-                avatar_state = parser.getAvatar(msg)
+                if parser.getCommand(msg.lower()) == "avatar":
+                    avatar_state = parser.getAvatar(msg)
+                elif parser.getCommand(msg.lower()) == "model":
+                    avatar_model = parser.getArguments(msg)[0]
             if avatar_state != False:
                 avatar_state_var.set(avatar_state)
+            elif avatar_model != False:
+                avatar_model_var.set(avatar_model)
             else:
                 print (msg)
                 display_message(msg)
@@ -42,7 +50,6 @@ def listenForMsg():
             appendToLog(log)
         else:
             time.sleep(1)
-
 
 def defineFile(name):
     global fileName
@@ -53,10 +60,28 @@ def appendToLog(msg):
     with open(fileName, 'a') as f:
         f.write(msg)
 
+# Function called when avatar state/model
+# is updated through GUI
+def sendAvatarModelUpdate(event):
+    global avatar_model_var
+    global Im_a_wizard_harry
+    if Im_a_wizard_harry:
+        send("/model "+ avatar_model_var.get())
+
+def sendAvatarStateUpdate(event):
+    global avatar_state_var
+    global Im_a_wizard_harry
+    if Im_a_wizard_harry:
+        send("/avatar "+ avatar_state_var.get())
+
 def createAvatar():
-    avatar = Avatar_widget(avatarFrame, windowWidth/2, windowHeight/3)
+    global avatar_w
+    global avatar_model_var
     global avatar_state_var 
-    avatar_state_var = avatar.get_state_var()
+    avatar_w = Avatar_widget(avatarFrame, windowWidth/2, windowHeight/3)
+    avatar_model_var, avatar_state_var = avatar_w.get_state_var()
+    avatarFrame.bind("<<AvatarModelUpdate>>", sendAvatarModelUpdate)
+    avatarFrame.bind("<<AvatarStateUpdate>>", sendAvatarStateUpdate)
 
 def createChat():
     global chat
@@ -89,6 +114,13 @@ def createChat():
     ttsLabel.pack()
     ttsToggle.pack()
 
+# set Im_a_wizard_harry to true
+# Add wizard controls to GUI
+def sendHagrid():
+    global avatar_w
+    global Im_a_wizard_harry
+    Im_a_wizard_harry = True
+    avatar_w.reveal_controls()
 
 def sendMessage(event = None):
     global name
@@ -96,10 +128,10 @@ def sendMessage(event = None):
     if(len(entry.get(1.0,END)) > 0):
         # check for wizard command
         if parser.getCommand(entry.get(1.0,END).lower()) == "wizard":
-            Im_a_wizard_harry = True
+            sendHagrid() # Im_a_wizard_harry = true
             entry.delete(1.0,END)
         else:
-            # check for avatar command
+            # check for avatar state command
             if parser.getCommand(entry.get(1.0,END).lower()) == "avatar"\
                     and Im_a_wizard_harry:
                 # update local avatar state
@@ -107,6 +139,16 @@ def sendMessage(event = None):
                 msg = entry.get(1.0,END)
                 avatar_state = parser.getAvatar(msg)
                 avatar_state_var.set(avatar_state)
+                send(msg)
+                entry.delete(1.0,END)
+            # check for avatar model command
+            elif parser.getCommand(entry.get(1.0,END).lower()) == "model"\
+                    and Im_a_wizard_harry:
+                # update local avatar model
+                # then send message unaltered
+                msg = entry.get(1.0,END)
+                avatar_model = parser.getArguments(msg)[0]
+                avatar_model_var.set(avatar_model)
                 send(msg)
                 entry.delete(1.0,END)
             elif (name == None):
@@ -124,7 +166,6 @@ def sendMessage(event = None):
                 display_message(msg)
                 entry.delete(1.0,END)
 
-
 def text_to_speech(msg):
     # only use text to speech for messages from other user and if text to speech is turned on
     if msg.startswith(name.rstrip()) and (ttsToggle["text"] == "On"):
@@ -133,7 +174,6 @@ def text_to_speech(msg):
         tts = gTTS(text=msg, lang='en', slow=False)
         tts.save("tts.mp3")
         os.system("mpg123 tts.mp3")
-
 
 def display_message(msg):
     chat.config(state=NORMAL)
@@ -146,7 +186,6 @@ def display_message(msg):
     tts_thread.daemon = True
     tts_thread.start()
 
-
 def ttsButton():
     if ttsToggle["text"] == "On":
         ttsToggle["text"] = "Off"
@@ -154,7 +193,6 @@ def ttsButton():
         ttsToggle["text"] = "On"
 
 if __name__=="__main__":
-
     root = Tk()
     root.title("Wizard of Oz")
 
@@ -190,7 +228,7 @@ if __name__=="__main__":
      "_" + datetime.datetime.now().strftime("%d") +
      "_" + datetime.datetime.now().strftime("%y"))
 
-    # connect("129.244.98.101", 8080)
+    #connect("10.30.146.181", 8080)
     connect("127.0.0.1", 8080)
 
 
