@@ -198,26 +198,29 @@ def ttsButton():
 
 if __name__=="__main__":
 
-    fields = multenterbox('Enter in the start-up information', '', ['IP Address', 'Port Number', 'Name'])
+    fields = multenterbox('Enter in the start-up information', '', ['IP Address', 'Port Number', 'Name', 'Debug'])
 
     if fields == None:
         sys.exit()
 
-    [ipaddr, portno, name] = fields
+    [ipaddr, portno, name, wizard_in] = fields
     ipaddr = ipaddr.strip()
     portno = portno.strip()
     name   = name.strip()
+    wizard_in = wizard_in.strip()
+
     while (ipaddr == '' or portno == '' or name == ''):
-        fields = multenterbox('Enter in the start-up information', '', ['IP Address', 'Port Number', 'Name'], [ipaddr, portno, name])
+        fields = multenterbox('Enter in the start-up information', '', ['IP Address', 'Port Number', 'Name', 'Debug'], [ipaddr, portno, name, wizard_in])
         if fields == None:
             sys.exit()
-        [ipaddr, portno, name] = fields
+        [ipaddr, portno, name, wizard_in] = fields
         ipaddr = ipaddr.strip()
         portno = portno.strip()
+        name = name.strip()
+        wizard_in = wizard_in.strip()
 
     connect(ipaddr, int(portno))
     send(name)
-
 
     root = Tk()
     root.title("Wizard of Oz")
@@ -244,6 +247,11 @@ if __name__=="__main__":
 
     createAvatar()
     createChat()
+
+
+    
+    if(wizard_in == 'wizard'):
+        sendHagrid()
 
     root.bind('<Return>', sendMessage)
     root.protocol("WM_DELETE_WINDOW", close_window)
