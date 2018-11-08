@@ -39,3 +39,4 @@ class Video:
         if self.vid.isOpened():
             self.vid.release()
 App(tkinter.Tk(), "")
+
