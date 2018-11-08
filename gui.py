@@ -3,6 +3,7 @@ from gtts import gTTS
 from tkinter import *
 from client import *
 from server import *
+from easygui import enterbox, multenterbox, exceptionbox
 import time
 import datetime
 import parser
@@ -19,7 +20,10 @@ avatar_state_var = None
 Im_a_wizard_harry = False
 
 def close_window():
-    send("{quit}")
+    try:
+        send("{quit}")
+    except Exception:
+        pass
     global running
     running = False
     root.destroy()
@@ -193,8 +197,34 @@ def ttsButton():
         ttsToggle["text"] = "On"
 
 if __name__=="__main__":
+
+    fields = multenterbox('Enter in the start-up information', '', ['IP Address', 'Port Number', 'Name', 'Debug'])
+
+    if fields == None:
+        sys.exit()
+
+    [ipaddr, portno, name, wizard_in] = fields
+    ipaddr = ipaddr.strip()
+    portno = portno.strip()
+    name   = name.strip()
+    wizard_in = wizard_in.strip()
+
+    while (ipaddr == '' or portno == '' or name == ''):
+        fields = multenterbox('Enter in the start-up information', '', ['IP Address', 'Port Number', 'Name', 'Debug'], [ipaddr, portno, name, wizard_in])
+        if fields == None:
+            sys.exit()
+        [ipaddr, portno, name, wizard_in] = fields
+        ipaddr = ipaddr.strip()
+        portno = portno.strip()
+        name = name.strip()
+        wizard_in = wizard_in.strip()
+
+    connect(ipaddr, int(portno))
+    send(name)
+
     root = Tk()
     root.title("Wizard of Oz")
+
 
     # can change the size if necessary
     windowWidth = 800
@@ -218,6 +248,11 @@ if __name__=="__main__":
     createAvatar()
     createChat()
 
+
+    
+    if(wizard_in == 'wizard'):
+        sendHagrid()
+
     root.bind('<Return>', sendMessage)
     root.protocol("WM_DELETE_WINDOW", close_window)
 
@@ -228,8 +263,9 @@ if __name__=="__main__":
      "_" + datetime.datetime.now().strftime("%d") +
      "_" + datetime.datetime.now().strftime("%y"))
 
+
     #connect("10.30.146.181", 8080)
-    connect("127.0.0.1", 8080)
+
 
 
 
