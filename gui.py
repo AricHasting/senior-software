@@ -198,7 +198,6 @@ def ttsButton():
 
 if __name__=="__main__":
 
-
     fields = multenterbox('Enter in the start-up information', '', ['IP Address', 'Port Number', 'Name'])
 
     if fields == None:
@@ -258,6 +257,7 @@ if __name__=="__main__":
 
 
     #connect("10.30.146.181", 8080)
+
 
 
 
