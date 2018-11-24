@@ -4,6 +4,7 @@ from tkinter import *
 from client import *
 from server import *
 from easygui import enterbox, multenterbox, exceptionbox
+import re
 import time
 import datetime
 import parser
@@ -175,7 +176,11 @@ def text_to_speech(msg):
     # only use text to speech for messages from other user and if text to speech is turned on
     if not msg.startswith(name.rstrip()) and (ttsToggle["text"] == "On"):
         msg.rstrip()
-        msg = msg[len(name):len(msg)]
+        start_idx = 0;
+        start_regex = re.search(r':\s*', msg)
+        if start_regex != None:
+            start_idx = start_regex.end();
+        msg = msg[start_idx:len(msg)]
         tts = gTTS(text=msg, lang='en', slow=False)
         tts.save("tts.mp3")
         os.system("mpg123 tts.mp3")
@@ -211,6 +216,10 @@ if __name__=="__main__":
     ipaddr = ipaddr.strip()
     portno = portno.strip()
     name   = name.strip()
+    # name must not contain character ':'
+    contains_colon = re.search(r':', name)
+    if contains_colon != None:
+        name = ''
     wizard_in = wizard_in.strip()
 
     while (ipaddr == '' or portno == '' or name == ''):
@@ -221,6 +230,10 @@ if __name__=="__main__":
         ipaddr = ipaddr.strip()
         portno = portno.strip()
         name = name.strip()
+        # name must not contain character ':'
+        contains_colon = re.search(r':', name)
+        if contains_colon != None:
+            name = ''
         wizard_in = wizard_in.strip()
 
     try:
