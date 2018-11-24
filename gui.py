@@ -8,6 +8,7 @@ import time
 import datetime
 import parser
 import os
+import server
 
 chat = None
 S = None
@@ -190,6 +191,9 @@ def display_message(msg):
     tts_thread.daemon = True
     tts_thread.start()
 
+def start_server(ip,port):
+    server.startserver(ip,int(port))
+
 def ttsButton():
     if ttsToggle["text"] == "On":
         ttsToggle["text"] = "Off"
@@ -219,13 +223,19 @@ if __name__=="__main__":
         name = name.strip()
         wizard_in = wizard_in.strip()
 
-    connect(ipaddr, int(portno))
+    try:
+        connect(ipaddr, int(portno))
+    except:
+        serverthread=Thread(target=start_server,args=(ipaddr,portno,))
+        serverthread.daemon=True
+        serverthread.start()
+        connect(ipaddr, int(portno))
     send(name)
 
     root = Tk()
     root.title("Wizard of Oz")
 
-
+    
     # can change the size if necessary
     windowWidth = 800
     windowHeight = 800
