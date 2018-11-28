@@ -10,6 +10,7 @@ import datetime
 import parser
 import os
 import server
+import speech
 
 chat = None
 S = None
@@ -117,8 +118,12 @@ def createChat():
     entry.pack(side = BOTTOM)
 
     ttsLabel = Label(chatFrame, text="Text to Speech")
-    ttsLabel.pack()
+    ttsLabel.pack(pady=(0, 5))
     ttsToggle.pack()
+
+    speechLabel = Label(chatFrame, text="Record text")
+    speechLabel.pack(pady=(20,5))
+    speechButton.pack()
 
 # set Im_a_wizard_harry to true
 # Add wizard controls to GUI
@@ -174,7 +179,7 @@ def sendMessage(event = None):
 
 def text_to_speech(msg):
     # only use text to speech for messages from other user and if text to speech is turned on
-    if not msg.startswith(name.rstrip()) and (ttsToggle["text"] == "On"):
+    if not msg.startswith(name.rstrip()):
         msg.rstrip()
         start_idx = 0;
         start_regex = re.search(r':\s*', msg)
@@ -192,9 +197,10 @@ def display_message(msg):
     chat.config(state=DISABLED)
     chat.see(END)
 
-    tts_thread = Thread(target=text_to_speech, args=(msg,))
-    tts_thread.daemon = True
-    tts_thread.start()
+    if ttsToggle["text"] == "On":
+        tts_thread = Thread(target=text_to_speech, args=(msg,))
+        tts_thread.daemon = True
+        tts_thread.start()
 
 def start_server(ip,port):
     server.startserver(ip,int(port))
@@ -204,6 +210,10 @@ def ttsButton():
         ttsToggle["text"] = "Off"
     else:
         ttsToggle["text"] = "On"
+
+def recordButton():
+    text = speech.record_and_recognize()
+    entry.insert(END, text)
 
 if __name__=="__main__":
 
@@ -256,7 +266,6 @@ if __name__=="__main__":
     size = str(windowWidth) + "x" + str(windowHeight)
     root.geometry(size)
 
-    # the colors are just there to differentiate the frames, should change later
     avatarFrame = Frame(root, bg = "white",width=windowWidth, height=windowHeight/3, bd=5)
     chatFrame = Frame(root, bg="white", width=windowWidth, height=windowHeight/3, bd=5)
     sendFrame = Frame(root, bg="white", width=windowWidth, height=windowHeight/6, bd=5)
@@ -268,10 +277,10 @@ if __name__=="__main__":
     # text to speech is on by default
     ttsToggle = Button(chatFrame, text="On", command=ttsButton)
 
+    speechButton = Button(chatFrame, text="Record", command=recordButton)
+
     createAvatar()
     createChat()
-
-
     
     if(wizard_in == 'wizard'):
         sendHagrid()
@@ -279,24 +288,14 @@ if __name__=="__main__":
     root.bind('<Return>', sendMessage)
     root.protocol("WM_DELETE_WINDOW", close_window)
 
-
     now = datetime.datetime.now()
 
     defineFile("VideoLog_" + datetime.datetime.now().strftime("%m") +
      "_" + datetime.datetime.now().strftime("%d") +
      "_" + datetime.datetime.now().strftime("%y"))
 
-
-    #connect("10.30.146.181", 8080)
-
-
-
-
     receive_msg_thread = Thread(target=listenForMsg)
     receive_msg_thread.daemon = True
     receive_msg_thread.start()
 
-
     root.mainloop()
-
-
