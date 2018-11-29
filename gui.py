@@ -14,6 +14,7 @@ import server
 import speech
 
 
+
 chat = None
 S = None
 running = True
