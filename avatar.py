@@ -25,12 +25,12 @@ class Avatar_widget:
         self.curr_avatar = Avatar(self.avatar_str.get())
         self.curr_state = Avatar_state(self.state_str.get())
         # initialize comboboxes
-        self.avatar_box = ttk.Combobox(parent_frame, textvariable = self.avatar_str,selectbackground=StColors.dark_grey,
+        self.avatar_box = ttk.Combobox(parent_frame, textvariable = self.avatar_str,
                     background=StColors.light_grey, foreground=StColors.dark_blue)
         self.avatar_box['values'] = [a.value for a in Avatar]
         self.avatar_box['state'] = "readonly"
         self.avatar_box.bind("<<ComboboxSelected>>", self.update_model_event)
-        self.state_box = ttk.Combobox(parent_frame, textvariable = self.state_str,selectbackground=StColors.dark_grey,
+        self.state_box = ttk.Combobox(parent_frame, textvariable = self.state_str,
                     background=StColors.light_grey, foreground=StColors.dark_blue)
         self.state_box['values'] = [a.value for a in Avatar_state]
         self.state_box['state'] = "readonly"
