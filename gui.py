@@ -108,7 +108,7 @@ def createChat():
     scroll.config(command=chat.yview)
     chat.config(yscrollcommand=scroll.set)
 
-    send = Button(sendFrame,text="Send", command=sendMessage)
+    send = Button(sendFrame,text="Send", command=sendMessage , font=("Calibri", 13, 'bold'), background="black", foreground=StColors.light_blue)
 
     send.pack(side=BOTTOM)
 
@@ -278,9 +278,9 @@ if __name__=="__main__":
     entry = Text(sendFrame, cursor="xterm", bd=5, bg="#E8E8E8")
 
     # text to speech is on by default
-    ttsToggle = Button(chatFrame, text="On", command=ttsButton)
+    ttsToggle = Button(chatFrame, text="On", command=ttsButton,font=("Calibri", 13, 'bold'), background="black", foreground=StColors.light_blue)
 
-    speechButton = Button(chatFrame, text="Record", command=recordButton)
+    speechButton = Button(chatFrame, text="Record", command=recordButton ,font=("Calibri", 13, 'bold'), background="black", foreground=StColors.light_blue)
 
     createAvatar()
     createChat()
