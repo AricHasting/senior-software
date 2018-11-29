@@ -2,6 +2,7 @@
 
 import cv2
 from tkinter import *
+from tkStyle import *
 from tkinter import ttk
 import PIL.Image
 import PIL.ImageTk
