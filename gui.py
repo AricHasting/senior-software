@@ -97,7 +97,7 @@ def createChat():
     global chat
     # replace this with a chat widget
     chatString = "chat"
-    chat = Text(chatFrame, bg="#E8E8E8")
+    chat = Text(chatFrame, bg="#cce6ff")
     chat.config(state=DISABLED)
 
     chat.pack()
@@ -120,11 +120,11 @@ def createChat():
     entry.config(yscrollcommand=scroll2.set)
     entry.pack(side = BOTTOM)
 
-    ttsLabel = Label(chatFrame, text="Text to Speech")
+    ttsLabel = Label(chatFrame, text="Text to Speech",foreground=StColors.dark_blue, padding=10, font=("Calibri", 12))
     ttsLabel.pack(pady=(0, 5))
     ttsToggle.pack()
 
-    speechLabel = Label(chatFrame, text="Record text")
+    speechLabel = Label(chatFrame, text="Record text",foreground=StColors.dark_blue, padding=10, font=("Calibri", 12))
     speechLabel.pack(pady=(20,5))
     speechButton.pack()
 
@@ -270,13 +270,13 @@ if __name__=="__main__":
     size = str(windowWidth) + "x" + str(windowHeight)
     root.geometry(size)
 
-    avatarFrame = Frame(root, bg = "white",width=windowWidth, height=windowHeight/3, bd=5)
-    chatFrame = Frame(root, bg="white", width=windowWidth, height=windowHeight/3, bd=5)
-    sendFrame = Frame(root, bg="white", width=windowWidth, height=windowHeight/6, bd=5)
+    avatarFrame = Frame(root, bg = StColors.light_grey,width=windowWidth, height=windowHeight/3, bd=5)
+    chatFrame = Frame(root, bg=StColors.light_grey, width=windowWidth, height=windowHeight/3, bd=5)
+    sendFrame = Frame(root, bg=StColors.light_grey, width=windowWidth, height=windowHeight/6, bd=5)
     avatarFrame.pack(fill=BOTH, expand=1)
     chatFrame.pack(fill=BOTH,expand=1)
     sendFrame.pack(fill=BOTH, expand=1)
-    entry = Text(sendFrame, cursor="xterm", bd=5, bg="#E8E8E8")
+    entry = Text(sendFrame, cursor="xterm", bd=5, bg="#E8E8E8",foreground=StColors.dark_blue)
 
     # text to speech is on by default
     ttsToggle = Button(chatFrame, text="On", command=ttsButton,font=("Calibri", 13, 'bold'), background="black", foreground=StColors.light_blue)
