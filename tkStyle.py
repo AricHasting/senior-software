@@ -2,7 +2,7 @@ from tkinter import ttk
 
 
 class StColors(object):
-    dark_blue = '#5c85d6'
+    dark_blue = '#193367'
     bright_blue = '#66ccff'
     dark_grey    = '#666666'
     mid_grey     = '#999999'
