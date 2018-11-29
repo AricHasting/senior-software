@@ -24,5 +24,3 @@ def set_app_style():
     style.map("TButton", background=[("active", StColors.bright_blue)], foreground=[("active", StColors.dark_blue)])
     style.configure("TEntry", foreground=StColors.dark_blue)
     style.configure("Horizontal.TProgressbar", background=StColors.mid_grey)
-
-    style.theme_use("st_app")
