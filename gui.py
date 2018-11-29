@@ -120,11 +120,11 @@ def createChat():
     entry.config(yscrollcommand=scroll2.set)
     entry.pack(side = BOTTOM)
 
-    ttsLabel = Label(chatFrame, text="Text to Speech",foreground=StColors.dark_blue, padding=10, font=("Calibri", 12))
+    ttsLabel = Label(chatFrame, text="Text to Speech",foreground=StColors.dark_blue,font=("Calibri", 12))
     ttsLabel.pack(pady=(0, 5))
     ttsToggle.pack()
 
-    speechLabel = Label(chatFrame, text="Record text",foreground=StColors.dark_blue, padding=10, font=("Calibri", 12))
+    speechLabel = Label(chatFrame, text="Record text",foreground=StColors.dark_blue, font=("Calibri", 12))
     speechLabel.pack(pady=(20,5))
     speechButton.pack()
 
