@@ -3,6 +3,7 @@ from gtts import gTTS
 from tkinter import *
 from client import *
 from server import *
+from tkStyle import *
 from easygui import enterbox, multenterbox, exceptionbox
 import re
 import time
@@ -11,6 +12,8 @@ import parser
 import os
 import server
 import speech
+
+
 
 chat = None
 S = None
@@ -94,7 +97,7 @@ def createChat():
     global chat
     # replace this with a chat widget
     chatString = "chat"
-    chat = Text(chatFrame, bg="#E8E8E8")
+    chat = Text(chatFrame, bg="#cce6ff")
     chat.config(state=DISABLED)
 
     chat.pack()
@@ -106,7 +109,7 @@ def createChat():
     scroll.config(command=chat.yview)
     chat.config(yscrollcommand=scroll.set)
 
-    send = Button(sendFrame,text="Send", command=sendMessage)
+    send = Button(sendFrame,text="Send", command=sendMessage , font=("Calibri", 13, 'bold'), background="black", foreground=StColors.light_blue)
 
     send.pack(side=BOTTOM)
 
@@ -117,11 +120,11 @@ def createChat():
     entry.config(yscrollcommand=scroll2.set)
     entry.pack(side = BOTTOM)
 
-    ttsLabel = Label(chatFrame, text="Text to Speech")
+    ttsLabel = Label(chatFrame, text="Text to Speech",foreground=StColors.dark_blue,font=("Calibri", 12))
     ttsLabel.pack(pady=(0, 5))
     ttsToggle.pack()
 
-    speechLabel = Label(chatFrame, text="Record text")
+    speechLabel = Label(chatFrame, text="Record text",foreground=StColors.dark_blue, font=("Calibri", 12))
     speechLabel.pack(pady=(20,5))
     speechButton.pack()
 
@@ -181,10 +184,10 @@ def text_to_speech(msg):
     # only use text to speech for messages from other user and if text to speech is turned on
     if not msg.startswith(name.rstrip()):
         msg.rstrip()
-        start_idx = 0;
+        start_idx = 0
         start_regex = re.search(r':\s*', msg)
         if start_regex != None:
-            start_idx = start_regex.end();
+            start_idx = start_regex.end()
         msg = msg[start_idx:len(msg)]
         tts = gTTS(text=msg, lang='en', slow=False)
         tts.save("tts.mp3")
@@ -258,6 +261,7 @@ if __name__=="__main__":
     root = Tk()
     root.title("Wizard of Oz")
 
+    set_app_style()
     
     # can change the size if necessary
     windowWidth = 800
@@ -266,18 +270,18 @@ if __name__=="__main__":
     size = str(windowWidth) + "x" + str(windowHeight)
     root.geometry(size)
 
-    avatarFrame = Frame(root, bg = "white",width=windowWidth, height=windowHeight/3, bd=5)
-    chatFrame = Frame(root, bg="white", width=windowWidth, height=windowHeight/3, bd=5)
-    sendFrame = Frame(root, bg="white", width=windowWidth, height=windowHeight/6, bd=5)
+    avatarFrame = Frame(root, bg = StColors.light_grey,width=windowWidth, height=windowHeight/3, bd=5)
+    chatFrame = Frame(root, bg=StColors.light_grey, width=windowWidth, height=windowHeight/3, bd=5)
+    sendFrame = Frame(root, bg=StColors.light_grey, width=windowWidth, height=windowHeight/6, bd=5)
     avatarFrame.pack(fill=BOTH, expand=1)
     chatFrame.pack(fill=BOTH,expand=1)
     sendFrame.pack(fill=BOTH, expand=1)
-    entry = Text(sendFrame, cursor="xterm", bd=5, bg="#E8E8E8")
+    entry = Text(sendFrame, cursor="xterm", bd=5, bg="#E8E8E8",foreground=StColors.dark_blue)
 
     # text to speech is on by default
-    ttsToggle = Button(chatFrame, text="On", command=ttsButton)
+    ttsToggle = Button(chatFrame, text="On", command=ttsButton,font=("Calibri", 13, 'bold'), background="black", foreground=StColors.light_blue)
 
-    speechButton = Button(chatFrame, text="Record", command=recordButton)
+    speechButton = Button(chatFrame, text="Record", command=recordButton ,font=("Calibri", 13, 'bold'), background="black", foreground=StColors.light_blue)
 
     createAvatar()
     createChat()
